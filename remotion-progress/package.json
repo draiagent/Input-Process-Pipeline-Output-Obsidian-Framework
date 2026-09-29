@@ -1,0 +1,20 @@
+{
+  "name": "chendong-progress-remotion",
+  "private": true,
+  "description": "陳董 2026 年 9 月進化紀錄 — Remotion 動畫",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render ProgressFilm out/chendong-progress-2026-09.mp4",
+    "stills": "node render-stills.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.530",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.530"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.0",
+    "typescript": "5.8.3"
+  }
+}

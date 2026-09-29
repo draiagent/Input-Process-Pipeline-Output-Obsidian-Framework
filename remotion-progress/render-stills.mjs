@@ -3,11 +3,13 @@ import { execFileSync } from "node:child_process";
 
 const SCENE = 165;
 const names = ["01-cover", "02-pipeline", "03-ssot", "04-skills", "05-explore", "06-signature"];
-names.forEach((name, i) => {
-  const frame = i * SCENE + 135;
-  execFileSync(
-    "npx",
-    ["remotion", "still", "ProgressFilm", `out/stills/${name}.png`, `--frame=${frame}`],
-    { stdio: "inherit" },
-  );
-});
+const targets = [
+  ["ProgressFilm", "out/stills"],
+  ["ProgressFilmVertical", "out/stills-vertical"],
+];
+for (const [comp, dir] of targets) {
+  names.forEach((name, i) => {
+    const frame = i * SCENE + 135;
+    execFileSync("npx", ["remotion", "still", comp, `${dir}/${name}.png`, `--frame=${frame}`], { stdio: "inherit" });
+  });
+}

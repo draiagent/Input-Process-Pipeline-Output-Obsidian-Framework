@@ -5,6 +5,7 @@
   "scripts": {
     "studio": "remotion studio",
     "render": "remotion render ProgressFilm out/chendong-progress-2026-09.mp4",
+    "render:vertical": "remotion render ProgressFilmVertical out/chendong-progress-2026-09-vertical.mp4",
     "stills": "node render-stills.mjs"
   },
   "dependencies": {

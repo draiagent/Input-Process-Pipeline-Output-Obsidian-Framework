@@ -114,7 +114,7 @@ export const SceneCover: React.FC = () => {
 };
 
 /* ───────── 2. 看影片 → 建框架：IPPOO 管線 ───────── */
-const LAYERS = [
+export const LAYERS = [
   { en: "Input", zh: "粗整理" },
   { en: "Process", zh: "邏輯驗證" },
   { en: "Pipeline", zh: "自動化" },
@@ -217,7 +217,7 @@ export const ScenePipeline: React.FC = () => {
 };
 
 /* ───────── 3. 碎片 → SSOT 壓縮 ───────── */
-const PixelCube: React.FC<{ n: number; cell: number; messy: boolean; seed: string }> = ({ n, cell, messy, seed }) => {
+export const PixelCube: React.FC<{ n: number; cell: number; messy: boolean; seed: string }> = ({ n, cell, messy, seed }) => {
   const frame = useCurrentFrame();
   return (
     <div style={{ position: "relative", width: n * cell, height: n * cell }}>
@@ -349,7 +349,7 @@ export const SceneCompress: React.FC = () => {
 };
 
 /* ───────── 4. Skills 技能包 Snapshot / Restore ───────── */
-const SKILLS = [
+export const SKILLS = [
   "品牌調度中心",
   "暗黑科技風",
   "雙品牌玻璃",
@@ -475,7 +475,7 @@ export const SceneSkills: React.FC = () => {
 };
 
 /* ───────── 5. 路徑探索：跨界 × N ───────── */
-const LINES = [
+export const LINES = [
   "益力康生技",
   "CGM 血糖教練",
   "益生寵愛",

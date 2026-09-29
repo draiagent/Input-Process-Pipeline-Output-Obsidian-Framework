@@ -1,6 +1,6 @@
 # 陳董 2026 年 9 月進化紀錄：Remotion 動畫
 
-這支 Remotion 動畫長 33 秒，畫面 1920×1080，每秒 30 格。視覺採用暗黑科技霓虹風（tech-style），分成六幕：
+這支 Remotion 動畫長 33 秒，每秒 30 格，有兩種版本：橫式 1920×1080（`ProgressFilm`），以及給短影音平台用的 9:16 直式 1080×1920（`ProgressFilmVertical`）。視覺採用暗黑科技霓虹風（tech-style），分成六幕：
 
 | # | 幕 | 參考意象 | 大字重點 |
 |---|---|---|---|
@@ -18,8 +18,9 @@
 ```bash
 npm install
 npm run studio   # 在瀏覽器預覽、微調
-npm run render   # 輸出 out/chendong-progress-2026-09.mp4
-npm run stills   # 每一幕輸出一張 PNG 海報到 out/stills/
+npm run render            # 橫式：out/chendong-progress-2026-09.mp4
+npm run render:vertical   # 直式：out/chendong-progress-2026-09-vertical.mp4
+npm run stills            # 每幕 PNG：out/stills/（橫式）、out/stills-vertical/（直式）
 ```
 
 字型放在 `public/fonts`：Noto Sans TC 與 Montserrat，已經子集化。渲染時不需要連網。

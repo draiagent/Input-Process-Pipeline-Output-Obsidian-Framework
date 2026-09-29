@@ -14,12 +14,13 @@ import { C, FONT_EN, FONT_ZH, GRAD_CTA, GRAD_TITLE, SCENE } from "./theme";
 /** 深藏青背景 + 透視網格地板 + 光柱 + 漂浮粒子 */
 export const TechBackground: React.FC<{ tint?: string }> = ({ tint = C.blue }) => {
   const frame = useCurrentFrame();
+  const { width: W, height: H } = useVideoConfig();
   const particles = new Array(70).fill(0).map((_, i) => {
-    const x = random(`px${i}`) * 1920;
-    const baseY = random(`py${i}`) * 1080;
+    const x = random(`px${i}`) * W;
+    const baseY = random(`py${i}`) * H;
     const speed = 0.3 + random(`ps${i}`) * 1.2;
     const size = 2 + random(`pz${i}`) * 4;
-    const y = (baseY - frame * speed + 1080) % 1080;
+    const y = (baseY - frame * speed + H) % H;
     const o = 0.25 + 0.6 * Math.abs(Math.sin(frame / 25 + i));
     return { x, y, size, o };
   });
@@ -31,15 +32,15 @@ export const TechBackground: React.FC<{ tint?: string }> = ({ tint = C.blue }) =
       }}
     >
       {/* 背景光柱 */}
-      {[180, 520, 1400, 1760].map((x, i) => (
+      {[0.09, 0.27, 0.73, 0.92].map((k, i) => (
         <div
-          key={x}
+          key={k}
           style={{
             position: "absolute",
-            left: x,
+            left: k * W,
             top: 0,
             width: 90,
-            height: 1080,
+            height: H,
             background: `linear-gradient(180deg, transparent, ${tint}22 40%, transparent)`,
             opacity: 0.5 + 0.3 * Math.sin(frame / 30 + i),
             filter: "blur(18px)",
@@ -147,18 +148,20 @@ export const CornerTitle: React.FC<{
 };
 
 /** 參考圖風格的底部大字幕（黑底白字 + 青色高光） */
-export const Caption: React.FC<{ text: string; highlight?: string; delay?: number }> = ({
-  text,
-  highlight,
-  delay = 18,
-}) => {
+export const Caption: React.FC<{
+  text: string;
+  highlight?: string;
+  delay?: number;
+  size?: number;
+  bottom?: number;
+}> = ({ text, highlight, delay = 18, size = 66, bottom = 118 }) => {
   const e = useEnter(delay, 18);
   const parts = highlight ? text.split(highlight) : [text];
   return (
     <div
       style={{
         position: "absolute",
-        bottom: 118,
+        bottom,
         left: 0,
         right: 0,
         display: "flex",
@@ -171,7 +174,7 @@ export const Caption: React.FC<{ text: string; highlight?: string; delay?: numbe
         style={{
           fontFamily: FONT_ZH,
           fontWeight: 700,
-          fontSize: 66,
+          fontSize: size,
           color: C.white,
           background: "rgba(0,0,0,0.72)",
           padding: "10px 34px",
@@ -330,5 +333,58 @@ export const Glass: React.FC<{
     }}
   >
     {children}
+  </div>
+);
+
+/** 直式（9:16）版底部署名列：兩行排版 */
+export const AttributionBarVertical: React.FC<{ page: number; total: number }> = ({ page, total }) => (
+  <div
+    style={{
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: 160,
+      background: GRAD_CTA,
+      display: "flex",
+      alignItems: "center",
+      padding: "0 40px",
+      gap: 22,
+      fontFamily: FONT_ZH,
+      color: C.white,
+    }}
+  >
+    <div
+      style={{
+        width: 100,
+        height: 100,
+        borderRadius: 20,
+        background: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+      }}
+    >
+      <Img src={staticFile("easycure-logo.png")} style={{ width: 92, height: 92 }} />
+    </div>
+    <div style={{ flex: 1 }}>
+      <div style={{ fontWeight: 900, fontSize: 44 }}>AI Coach 益力康陳董</div>
+      <div style={{ fontWeight: 500, fontSize: 26, marginTop: 4 }}>
+        血糖教練 CGM Coach ・ 2026 AI to Agent
+      </div>
+    </div>
+    <div
+      style={{
+        fontFamily: FONT_EN,
+        fontWeight: 700,
+        fontSize: 28,
+        border: "2px solid rgba(255,255,255,0.8)",
+        borderRadius: 30,
+        padding: "4px 16px",
+      }}
+    >
+      {page}/{total}
+    </div>
   </div>
 );

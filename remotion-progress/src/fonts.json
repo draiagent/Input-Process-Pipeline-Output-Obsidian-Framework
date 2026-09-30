@@ -1,0 +1,27 @@
+[
+  {
+    "family": "NotoSansTC",
+    "weight": "500",
+    "file": "fonts/NotoSansTC-500.woff2"
+  },
+  {
+    "family": "NotoSansTC",
+    "weight": "700",
+    "file": "fonts/NotoSansTC-700.woff2"
+  },
+  {
+    "family": "NotoSansTC",
+    "weight": "900",
+    "file": "fonts/NotoSansTC-900.woff2"
+  },
+  {
+    "family": "Montserrat",
+    "weight": "700",
+    "file": "fonts/Montserrat-700.woff2"
+  },
+  {
+    "family": "Montserrat",
+    "weight": "900",
+    "file": "fonts/Montserrat-900.woff2"
+  }
+]

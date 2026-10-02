@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024"><defs>
+<radialGradient id="body" cx="38%" cy="28%" r="80%">
+ <stop offset="0" stop-color="#D4F77A"/><stop offset=".55" stop-color="#9BDD1F"/><stop offset="1" stop-color="#5E9A00"/></radialGradient>
+<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+ <stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient>
+<radialGradient id="arm" cx="40%" cy="30%" r="75%">
+ <stop offset="0" stop-color="#D4F77A"/><stop offset="1" stop-color="#5E9A00"/></radialGradient>
+<radialGradient id="wool" cx="40%" cy="30%" r="80%">
+ <stop offset="0" stop-color="#4a4a52"/><stop offset=".6" stop-color="#1c1c22"/><stop offset="1" stop-color="#08080a"/></radialGradient>
+<filter id="fur" x="-8%" y="-8%" width="116%" height="116%">
+ <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="31" result="n"/>
+ <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" result="d"/>
+ <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="36" result="n2"/>
+ <feColorMatrix in="n2" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  2.2 0 0 0 -1.15" result="hi"/>
+ <feComposite in="hi" in2="d" operator="in" result="his"/>
+ <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 -2.2 0 0 1.0" result="lo"/>
+ <feComposite in="lo" in2="d" operator="in" result="los"/>
+ <feMerge><feMergeNode in="d"/><feMergeNode in="los"/><feMergeNode in="his"/></feMerge>
+</filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+ <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="33" result="n"/>
+ <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="drop" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity=".28"/></filter>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="18"/></filter>
+<linearGradient id="dev" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4b4f59"/><stop offset="1" stop-color="#1d1f25"/></linearGradient>
+<linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e9f4"/></linearGradient>
+<linearGradient id="lens" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9fbff" stop-opacity=".75"/><stop offset="1" stop-color="#9fe3f0" stop-opacity=".35"/></linearGradient>
+<linearGradient id="sun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3a46"/><stop offset=".5" stop-color="#101016"/><stop offset="1" stop-color="#000"/></linearGradient>
+</defs><g filter="url(#fur)"><path d="M150 900 C120 720 170 560 280 500 C250 360 330 280 420 300 C470 310 500 345 512 380 C530 345 560 310 610 300 C700 280 780 360 750 500 C860 560 905 720 875 900 Z" fill="url(#body)"/><path d="M150 900 C120 720 170 560 280 500 C250 360 330 280 420 300 C470 310 500 345 512 380 C530 345 560 310 610 300 C700 280 780 360 750 500 C860 560 905 720 875 900 Z" fill="url(#shade)"/></g><g filter="url(#drop)">
+<circle cx="415" cy="410" r="92" fill="#fff"/><circle cx="610" cy="410" r="92" fill="#fff"/>
+<circle cx="435" cy="420" r="48" fill="#0b0b12"/><circle cx="590" cy="420" r="48" fill="#0b0b12"/>
+<circle cx="452" cy="400" r="15" fill="#fff"/><circle cx="607" cy="400" r="15" fill="#fff"/></g>
+<path d="M470 600 Q512 630 555 600" stroke="#2c4a00" stroke-width="12" stroke-linecap="round" fill="none"/><g filter="url(#drop)">
+<rect x="680" y="840" width="300" height="62" rx="12" fill="#2f5fd0"/><rect x="690" y="850" width="280" height="10" fill="#fff" opacity=".35"/>
+<rect x="700" y="782" width="270" height="62" rx="12" fill="#1f8a6a"/><rect x="710" y="792" width="250" height="10" fill="#fff" opacity=".35"/>
+<rect x="690" y="724" width="260" height="62" rx="12" fill="#e2a23a"/><rect x="700" y="734" width="240" height="10" fill="#fff" opacity=".35"/></g><g filter="url(#fur)"><ellipse cx="330" cy="860" rx="100" ry="66" transform="rotate(-5 330 860)" fill="url(#arm)"/></g><g filter="url(#drop)">
+<path d="M560 770 L470 900" stroke="#1d1d24" stroke-width="44" stroke-linecap="round"/>
+<circle cx="640" cy="650" r="135" fill="url(#lens)"/>
+<circle cx="640" cy="650" r="135" fill="none" stroke="#1d1d24" stroke-width="30"/>
+<path d="M565 600 q30 -55 95 -60" stroke="#fff" stroke-width="16" stroke-linecap="round" fill="none" opacity=".8"/></g><g filter="url(#fur)"><ellipse cx="510" cy="860" rx="78" ry="56" transform="rotate(-30 510 860)" fill="url(#arm)"/></g></svg>

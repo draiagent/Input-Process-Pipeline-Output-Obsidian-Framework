@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPPOO 互動課程</title>
+<meta name="description" content="IPPOO™ 智慧知識轉換框架互動課程：Input、Process、Pipeline、Output、Obsidian 五層多模型協作 SOP。">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#e6f3ff; --bg2:#e3faf5; --bg3:#ffffff;
+  --ink:#0f2a44; --ink2:#3d5a75; --muted:#6b8299;
+  --blue:#1565c0; --sky:#1e88e5; --cyan:#00acc1; --teal:#13a89e; --gold:#e0a100;
+  --glass:rgba(255,255,255,.66); --glass-strong:rgba(255,255,255,.85);
+  --line:rgba(30,136,229,.22); --glow:0 8px 28px rgba(30,136,229,.14);
+  --ok:#13a89e; --bad:#d9534f;
+  --r:24px;
+  --c-input:#1e88e5; --c-process:#5e5ce6; --c-pipeline:#00acc1; --c-output:#e0a100; --c-obsidian:#7b4fd6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  margin:0;color:var(--ink);font-family:"Noto Sans TC","Inter",system-ui,sans-serif;line-height:1.7;
+  background:linear-gradient(135deg,var(--bg1) 0%,var(--bg3) 45%,var(--bg2) 100%) fixed;
+  -webkit-font-smoothing:antialiased;
+}
+.en{font-family:"Montserrat","Inter",sans-serif}
+a{color:var(--blue)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+/* nav */
+nav.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;align-items:center;gap:16px;height:60px}
+.brand{font-weight:800;color:var(--blue);text-decoration:none;white-space:nowrap}
+.navlinks{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
+.navlinks::-webkit-scrollbar{display:none}
+.navlinks a{white-space:nowrap;text-decoration:none;color:var(--ink2);font-size:14px;padding:6px 12px;border-radius:999px}
+.navlinks a.on,.navlinks a:hover{background:rgba(30,136,229,.12);color:var(--blue)}
+.progress{position:absolute;left:0;bottom:-1px;height:3px;background:linear-gradient(90deg,var(--sky),var(--teal));width:0}
+/* sections */
+section{padding:64px 0 24px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--teal);text-transform:uppercase}
+h1{font-size:clamp(30px,5.4vw,54px);line-height:1.2;margin:.2em 0 .3em;font-weight:900}
+h2{font-size:clamp(24px,3.4vw,34px);margin:.2em 0 .4em;line-height:1.3}
+h3{font-size:19px;margin:.2em 0 .4em}
+.lead{font-size:clamp(16px,2vw,19px);color:var(--ink2);max-width:760px}
+.card{background:var(--glass);border:1px solid rgba(255,255,255,.9);box-shadow:var(--glow),inset 0 0 0 1px var(--line);border-radius:var(--r);padding:24px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(30,136,229,.1);color:var(--blue)}
+.btn{font:inherit;font-weight:700;border:0;cursor:pointer;border-radius:14px;padding:10px 18px;background:linear-gradient(135deg,var(--sky),var(--teal));color:#fff;box-shadow:0 6px 18px rgba(19,168,158,.25)}
+.btn.ghost{background:var(--glass-strong);color:var(--blue);box-shadow:inset 0 0 0 1px var(--line)}
+.btn:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(30,136,229,.45);outline-offset:2px}
+/* hero */
+.hero{padding-top:56px}
+.hero .tagline{display:inline-flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.hero .quote{margin-top:24px;font-size:clamp(18px,2.4vw,24px);font-weight:700}
+.hero .quote b{color:var(--sky)} .hero .quote i{font-style:normal;color:var(--teal)}
+.stats{margin-top:28px}
+.stats{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.stat{text-align:center;padding:18px}
+.stat .n{font-size:34px;font-weight:800;color:var(--blue);line-height:1.1}
+.stat .l{font-size:14px;color:var(--ink2)}
+/* architecture */
+.arch{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;position:relative;margin-top:16px}
+.node{position:relative;cursor:pointer;text-align:left;font:inherit;color:inherit;border:0;width:100%;background:none;padding:0}
+.node .card{padding:18px;transition:transform .2s,box-shadow .2s;height:100%}
+.node:hover .card,.node.on .card{transform:translateY(-3px);box-shadow:0 12px 32px rgba(30,136,229,.22),inset 0 0 0 2px var(--c)}
+.node .letter{font-size:40px;font-weight:800;color:var(--c);line-height:1}
+.node .name{font-weight:800;font-size:18px}
+.node .tool{font-size:13px;color:var(--ink2)}
+.arch .node:not(:last-child)::after{content:"▶";position:absolute;right:-22px;top:50%;transform:translateY(-50%);color:var(--sky);font-size:14px}
+.hub{margin:28px auto 0;max-width:520px;position:relative}
+.hub::before{content:"";position:absolute;left:12%;right:12%;top:-28px;height:28px;border:2px dashed rgba(123,79,214,.45);border-top:0;border-radius:0 0 18px 18px}
+.detail{margin-top:24px;border-left:6px solid var(--c,var(--sky))}
+.detail table{width:100%;border-collapse:collapse}
+.detail td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.detail td:first-child{width:110px;color:var(--muted);font-weight:700;white-space:nowrap}
+.boundary{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(224,161,0,.12);color:#7a5800;font-weight:700}
+/* principles */
+.pr .ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,rgba(30,136,229,.15),rgba(19,168,158,.18));margin-bottom:8px}
+/* SOP stepper */
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.steps button{font:inherit;font-weight:700;border:0;cursor:pointer;padding:10px 16px;border-radius:14px;background:var(--glass-strong);color:var(--ink2);box-shadow:inset 0 0 0 1px var(--line)}
+.steps button.on{background:linear-gradient(135deg,var(--sky),var(--teal));color:#fff;box-shadow:none}
+.steps button .ck{margin-left:6px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;cursor:pointer}
+.checklist label:hover{background:rgba(30,136,229,.06)}
+.checklist input{width:20px;height:20px;margin-top:4px;accent-color:var(--teal);flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0 30px}
+.chip{font:inherit;font-size:13px;border:0;cursor:pointer;padding:5px 12px;border-radius:999px;background:rgba(30,136,229,.08);color:var(--ink2)}
+.chip.on{background:var(--teal);color:#fff}
+pre{background:rgba(15,42,68,.04);border:1px solid var(--line);border-radius:16px;padding:14px 16px;overflow:auto;font-size:13.5px;line-height:1.6;margin:10px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.decision{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:10px}
+.decision button{font:inherit;text-align:left;border:0;cursor:pointer;padding:16px;border-radius:18px;background:var(--glass-strong);box-shadow:inset 0 0 0 1px var(--line)}
+.decision button.on{box-shadow:inset 0 0 0 2px var(--teal);background:rgba(19,168,158,.08)}
+.result{margin-top:12px;padding:14px 16px;border-radius:16px;background:rgba(19,168,158,.1);font-weight:500}
+ol.big{padding-left:22px} ol.big li{margin:6px 0}
+/* three questions */
+.tq{counter-reset:q}
+.tq .q{position:relative;padding-left:56px}
+.tq .q::before{counter-increment:q;content:counter(q);position:absolute;left:0;top:0;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--c-process),var(--sky))}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:14px;padding:10px 12px;resize:vertical}
+textarea{min-height:76px}
+.field{margin-bottom:12px}
+.field label{display:block;font-weight:700;font-size:14px;margin-bottom:4px}
+.field small{color:var(--muted);font-weight:400}
+.meter{height:10px;border-radius:999px;background:rgba(30,136,229,.1);overflow:hidden;margin:8px 0}
+.meter > div{height:100%;width:0;background:linear-gradient(90deg,var(--sky),var(--teal));transition:width .3s}
+/* matrix / sorter */
+table.matrix{width:100%;border-collapse:collapse;font-size:15px}
+table.matrix th,table.matrix td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.matrix th{font-size:13px;color:var(--muted)}
+table.matrix td:first-child{font-weight:800}
+.tablewrap{overflow-x:auto}
+.task{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:var(--glass-strong);box-shadow:inset 0 0 0 1px var(--line);margin-bottom:10px}
+.task .t{flex:1 1 220px;font-weight:500}
+.task .opts{display:flex;gap:6px;flex-wrap:wrap}
+.task .opts button{font:inherit;font-size:13px;border:0;cursor:pointer;padding:6px 10px;border-radius:10px;background:rgba(30,136,229,.08);color:var(--ink2)}
+.task.right{box-shadow:inset 0 0 0 2px var(--ok)} .task.wrong{box-shadow:inset 0 0 0 2px var(--bad)}
+.task .fb{flex-basis:100%;font-size:13px;color:var(--ink2)}
+.task .opts button.pick{background:var(--ink);color:#fff}
+/* design system */
+.swatches{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.sw{width:64px;text-align:center;font-size:11px;color:var(--muted)}
+.sw span{display:block;height:44px;border-radius:12px;margin-bottom:4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.preview169{aspect-ratio:16/9;border-radius:20px;padding:5%;background:linear-gradient(135deg,#d9ecff,#dff7f2);display:grid;grid-template-columns:1fr 1fr;gap:4%;align-content:center}
+.preview169 .pc{background:rgba(255,255,255,.7);border-radius:16px;box-shadow:0 0 0 1px rgba(30,136,229,.25),0 6px 20px rgba(30,136,229,.18);padding:8%}
+.preview169 .pt{grid-column:1/-1;font-weight:900;color:var(--blue);font-size:clamp(14px,2.2vw,22px)}
+.preview169 .pc b{display:block;color:var(--blue);font-size:clamp(12px,1.6vw,16px)} .preview169 .pc small{font-size:clamp(10px,1.2vw,13px);color:var(--ink2)}
+/* quiz */
+.qz .opt{display:block;width:100%;text-align:left;font:inherit;border:0;cursor:pointer;margin:8px 0;padding:12px 16px;border-radius:14px;background:var(--glass-strong);box-shadow:inset 0 0 0 1px var(--line)}
+.qz .opt.right{box-shadow:inset 0 0 0 2px var(--ok);background:rgba(19,168,158,.1)}
+.qz .opt.wrong{box-shadow:inset 0 0 0 2px var(--bad);background:rgba(217,83,79,.08)}
+.qz .why{margin-top:8px;color:var(--ink2);font-size:15px}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;transition:transform .3s;z-index:50;font-size:14px}
+.toast.show{transform:translateX(-50%) translateY(0)}
+footer{padding:48px 0 64px;color:var(--muted);font-size:14px;text-align:center}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media (max-width:820px){
+  .arch{grid-template-columns:1fr 1fr;gap:16px}
+  .arch .node::after{display:none}
+  .hub::before{display:none}
+  .hub{margin-top:16px}
+}
+@media (max-width:480px){
+  .arch{grid-template-columns:1fr}
+  .card{padding:18px}
+  .detail td:first-child{width:auto;white-space:normal}
+  .tq .q{padding-left:0;padding-top:48px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="課程章節">
+  <div class="wrap">
+    <a class="brand en" href="#hero">IPPOO™</a>
+    <div class="navlinks" id="navlinks">
+      <a href="#arch">架構</a>
+      <a href="#principles">原則</a>
+      <a href="#sop">SOP</a>
+      <a href="#lab">三問實作</a>
+      <a href="#matrix">分工</a>
+      <a href="#design">視覺規範</a>
+      <a href="#template">交接模板</a>
+      <a href="#quiz">測驗</a>
+      <a href="#card">速查卡</a>
+    </div>
+  </div>
+  <div class="progress" id="progress"></div>
+</nav>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="wrap">
+    <div class="eyebrow en">AI to Agent · Interactive Course</div>
+    <h1>IPPOO™ 智慧知識轉換框架<br><span style="color:var(--sky)">多模型協作 SOP</span></h1>
+    <p class="lead">多個 AI 工具各自獨立、無法共享記憶——這是 AI 時代最常見的知識斷層。IPPOO 用五個層級把 Gemini、Claude、Claude Code、GPT-5.6 串成一條有紀律的知識生產線，並以本機 Obsidian Markdown 知識庫作為<strong>唯一事實來源（SSOT）</strong>。</p>
+    <div class="tagline">
+      <span class="pill en">Input</span><span class="pill en">Process</span><span class="pill en">Pipeline</span><span class="pill en">Output</span><span class="pill en">Obsidian</span>
+    </div>
+    <p class="quote">讓 AI 幫你「<b>快</b>」，讓框架幫你「<i>準</i>」。</p>
+    <div class="grid g4 stats">
+      <div class="card stat"><div class="n en">5</div><div class="l">處理層級</div></div>
+      <div class="card stat"><div class="n en">4</div><div class="l">協作模型</div></div>
+      <div class="card stat"><div class="n en">3</div><div class="l">Process 驗證三問</div></div>
+      <div class="card stat"><div class="n en">1</div><div class="l">唯一事實來源</div></div>
+    </div>
+    <p style="margin-top:20px" class="row"><a class="btn" href="#arch" style="text-decoration:none">開始上課 →</a><a class="btn ghost" href="#quiz" style="text-decoration:none">直接挑戰測驗</a></p>
+  </div>
+</section>
+
+<!-- ARCH -->
+<section id="arch">
+  <div class="wrap">
+    <div class="eyebrow">第 1 課 · 架構總覽</div>
+    <h2>點擊任一層，看它的技術規格</h2>
+    <p class="lead">資料依 I → P → P → O 單向流動，每一層完成後都回寫 Obsidian。模型不互相記憶，只讀寫同一個知識庫。</p>
+    <div class="arch" id="archNodes"></div>
+    <div class="hub" id="hubSlot"></div>
+    <div class="card detail" id="detail" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section id="principles">
+  <div class="wrap">
+    <div class="eyebrow">第 2 課 · 核心設計原則</div>
+    <h2>四條原則，守住知識一致性</h2>
+    <div class="grid g2" id="prGrid"></div>
+  </div>
+</section>
+
+<!-- SOP -->
+<section id="sop">
+  <div class="wrap">
+    <div class="eyebrow">第 3 課 · 標準作業程序</div>
+    <h2>跟著步驟跑一份素材</h2>
+    <p class="lead">勾選項目會自動儲存在您的瀏覽器，下次回來進度還在。</p>
+    <div class="steps" id="steps" role="tablist"></div>
+    <div class="card" id="stepBody"></div>
+  </div>
+</section>
+
+<!-- LAB -->
+<section id="lab">
+  <div class="wrap">
+    <div class="eyebrow">第 4 課 · Process 三問實作</div>
+    <h2>把一個結論丟進來，親手跑一次驗證</h2>
+    <p class="lead">三問不可省略。全部填完，「最終定稿邏輯」才會解鎖——這就是 Process 層的紀律。</p>
+    <div class="card">
+      <div class="field"><label for="lab0">待驗證的結論 <small>（例：每餐先吃菜再吃飯，可降低餐後血糖峰值）</small></label><input type="text" id="lab0"></div>
+      <div class="tq">
+        <div class="field q"><label for="lab1">費曼複述 <small>— 能否用自己的話講給外行人聽？</small></label><textarea id="lab1" placeholder="用國中生聽得懂的話說一次……"></textarea></div>
+        <div class="field q"><label for="lab2">第一性原理拆解 <small>— 前提假設是什麼？跨界（生技／寵物／教學／體育）還成立嗎？</small></label><textarea id="lab2" placeholder="這個結論成立，必須先成立的條件是……"></textarea></div>
+        <div class="field q"><label for="lab3">反例／風險點 <small>— 有沒有被忽略的限制或反對案例？</small></label><textarea id="lab3" placeholder="在什麼情況下這個結論會失效……"></textarea></div>
+      </div>
+      <div class="meter" aria-hidden="true"><div id="labMeter"></div></div>
+      <div class="field"><label for="lab4">最終定稿邏輯 <small id="labLock">🔒 先完成三問才能填寫</small></label><textarea id="lab4" disabled placeholder="一句話收斂結論"></textarea></div>
+      <div class="row"><button class="btn" id="labToTpl">帶入交接模板 ↓</button><button class="btn ghost" id="labClear">清空</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- MATRIX -->
+<section id="matrix">
+  <div class="wrap">
+    <div class="eyebrow">第 5 課 · 工具分工矩陣</div>
+    <h2>誰做什麼，更重要的是：誰<em style="color:var(--bad);font-style:normal">不</em>做什麼</h2>
+    <div class="card tablewrap">
+      <table class="matrix">
+        <thead><tr><th>模型</th><th>IPPOO 層級</th><th>核心職責</th><th>不應執行</th></tr></thead>
+        <tbody id="matrixBody"></tbody>
+      </table>
+    </div>
+    <h3 style="margin-top:28px">🎯 小遊戲：這件事該交給誰？</h3>
+    <div id="sorter"></div>
+    <p class="row"><strong id="sorterScore">0 / 0</strong><button class="btn ghost" id="sorterReset">重玩</button></p>
+  </div>
+</section>
+
+<!-- DESIGN -->
+<section id="design">
+  <div class="wrap">
+    <div class="eyebrow">第 6 課 · Output 視覺化設計系統</div>
+    <h2>EMBA／MedTech 會議簡報風格</h2>
+    <div class="grid g2">
+      <div class="card">
+        <h3>規範</h3>
+        <ul>
+          <li>畫布 <strong>16:9 橫式</strong></li>
+          <li>淺藍－青綠漸層背景 + 玻璃擬態卡片</li>
+          <li>卡片 <strong>24px 圓角</strong>、半透明白色面板、柔和藍色光暈邊框</li>
+          <li>字型：繁中 思源黑體／Noto Sans TC；英文 Montserrat／Inter</li>
+          <li>一張卡片一個重點，留白充足</li>
+          <li style="color:var(--bad)"><strong>禁止</strong>：深色背景、過度裝飾、資訊過載</li>
+        </ul>
+        <div class="swatches">
+          <div class="sw"><span style="background:#e6f3ff"></span>淺藍</div>
+          <div class="sw"><span style="background:#e3faf5"></span>淺綠</div>
+          <div class="sw"><span style="background:#1565c0"></span>科技藍</div>
+          <div class="sw"><span style="background:#1e88e5"></span>亮藍</div>
+          <div class="sw"><span style="background:#00acc1"></span>青</div>
+          <div class="sw"><span style="background:#e0a100"></span>金</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>即時預覽</h3>
+        <div class="preview169">
+          <div class="pt">IPPOO 讓多模型協作有紀律</div>
+          <div class="pc"><b>記憶體外置</b><small>Obsidian 為唯一事實來源</small></div>
+          <div class="pc"><b>邏輯與視覺分離</b><small>Process 管對錯，Output 管好看</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEMPLATE -->
+<section id="template">
+  <div class="wrap">
+    <div class="eyebrow">第 7 課 · Obsidian 交接文件</div>
+    <h2>填表，一鍵產出交接 Markdown</h2>
+    <p class="lead">檔名自動依 <code>[主題]_v[版本]_[日期].md</code> 規則命名，可直接存進 Vault 的 <code>01_Process定稿</code>。</p>
+    <div class="grid g2">
+      <div class="card" id="tplForm"></div>
+      <div class="card">
+        <div class="qhead"><h3 id="tplName">檔名</h3><div class="row"><button class="btn ghost" id="tplCopy">複製</button><button class="btn" id="tplDl">下載 .md</button></div></div>
+        <pre id="tplOut" style="max-height:640px"></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="wrap">
+    <div class="eyebrow">第 8 課 · 隨堂測驗</div>
+    <h2>檢驗理解：費曼一下</h2>
+    <div class="card qz" id="quizBox"></div>
+  </div>
+</section>
+
+<!-- CARD -->
+<section id="card">
+  <div class="wrap">
+    <div class="eyebrow">附錄 · 快速參考卡</div>
+    <h2>新素材進來，照這個順序跑</h2>
+    <div class="card">
+      <ol class="big">
+        <li><strong>Input</strong> → Gemini／NotebookLM 整理重點 + 時間戳</li>
+        <li><strong>Process</strong> → Claude 跑「費曼複述／第一性原理／反例驗證」三問</li>
+        <li><strong>Pipeline</strong> →（視需要）Claude Code 自動化</li>
+        <li><strong>Output</strong> → GPT-5.6 依視覺化就緒稿產出，不可更動核心論證</li>
+        <li><strong>回寫</strong> → 定稿存入 Obsidian Vault，建立雙向連結</li>
+      </ol>
+      <h3 style="margin-top:20px">自動化擴充待辦（Claude Code）</h3>
+      <div class="checklist" id="autoList"></div>
+      <h3 style="margin-top:20px">七工具 MCP 短影音產線</h3>
+      <pre><code>Whisper → ffmpeg → Auto-Editor → ImageMagick → ElevenLabs → Pexels API</code></pre>
+      <p>Process 階段定稿的逐字稿與腳本，作為 Whisper 校對基準，確保短影音字幕不因自動化流程而失真。</p>
+      <p class="row"><button class="btn ghost" onclick="window.print()">列印速查卡</button></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>AI Coach 益力康陳董</strong> ｜ 2026 AI to Agent</p>
+    <p>原始文件：<a href="https://github.com/draiagent/Input-Process-Pipeline-Output-Obsidian-Framework">IPPOO SOP 技術文件 v1.0</a> ｜ © 2026 保留所有權利</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('ippoo:' + k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem('ippoo:' + k, JSON.stringify(v)); } catch(e){} }
+};
+const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 1800); };
+
+/* ---------- 1. Architecture ---------- */
+const LAYERS = [
+  {k:'input', L:'I', name:'Input 輸入', tool:'Gemini 付費版 / NotebookLM', c:'var(--c-input)', rows:[
+    ['輸入來源','YouTube／TikTok／Facebook 等教學影片或圖文'],
+    ['處理動作','逐字稿擷取、章節分類、重點條列、時間戳標記'],
+    ['輸出格式','結構化文字（章節 → 條列重點 → 時間戳）'],
+    ['品質檢核','來源分級：一手實戰／二手教學／純流量內容']], boundary:'不做深度邏輯驗證——粗整理就好，判斷交給 Process。'},
+  {k:'process', L:'P', name:'Process 驗證', tool:'Claude', c:'var(--c-process)', rows:[
+    ['核心動作','固定三問驗證機制'],
+    ['驗證機制','① 費曼複述測試 ② 第一性原理拆解 ③ 反例／風險點搜尋'],
+    ['輸出格式','定稿邏輯（一句話收斂結論）']], boundary:'只處理內容正確性與邏輯嚴謹度，不涉及視覺呈現。'},
+  {k:'pipeline', L:'P', name:'Pipeline 管線', tool:'Claude Code（選用）', c:'var(--c-pipeline)', rows:[
+    ['觸發條件','僅當需要重複性、自動化產出時啟用（單次教材整理可跳過）'],
+    ['典型應用','短影音自動化產線：Whisper → ffmpeg → Auto-Editor → ImageMagick → ElevenLabs → Pexels API'],
+    ['輸出格式','依需求而定（.md／.mp4／.pptx 等）']], boundary:'不做內容邏輯判斷——只執行已定稿的內容。'},
+  {k:'output', L:'O', name:'Output 輸出', tool:'GPT-5.6（或其他視覺化模型）', c:'var(--c-output)', rows:[
+    ['核心動作','依「視覺化就緒稿」產出繁中簡報／圖像'],
+    ['品質檢核','版面風格、字型排版是否符合既定視覺規範']], boundary:'只負責視覺呈現，不可更動 Process 階段鎖定的核心論證。'},
+  {k:'obsidian', L:'O', name:'Obsidian 記憶中樞', tool:'本機 Markdown Vault · SSOT', c:'var(--c-obsidian)', rows:[
+    ['角色','四個模型共用的外部記憶體，唯一事實來源'],
+    ['檔案格式','Markdown (.md)，本機儲存'],
+    ['核心機制','雙向連結 [[筆記名稱]] + 關聯圖 Graph View'],
+    ['目錄建議','00_Inbox ／ 01_Process定稿 ／ 02_圖片上傳 ／ 03_GPT交接稿'],
+    ['附件設定','優化「新附件的預設位置」，避免圖片散落根目錄']], boundary:'模型不互相記憶，所有跨階段狀態都存在這裡。'}
+];
+const nodeHTML = l => `<button class="node" data-k="${l.k}" style="--c:${l.c}" aria-pressed="false"><div class="card"><div class="letter en">${l.L}</div><div class="name">${l.name}</div><div class="tool">${l.tool}</div></div></button>`;
+$('#archNodes').innerHTML = LAYERS.slice(0,4).map(nodeHTML).join('');
+$('#hubSlot').innerHTML = nodeHTML(LAYERS[4]);
+function showLayer(k){
+  const l = LAYERS.find(x => x.k === k);
+  document.querySelectorAll('.node').forEach(n => { const on = n.dataset.k === k; n.classList.toggle('on', on); n.setAttribute('aria-pressed', on); });
+  const d = $('#detail'); d.style.setProperty('--c', l.c);
+  d.innerHTML = `<h3 style="color:${l.c}">${l.name}　<span class="pill">${l.tool}</span></h3>
+    <table>${l.rows.map(r => `<tr><td>${r[0]}</td><td>${esc(r[1])}</td></tr>`).join('')}</table>
+    <div class="boundary">⚠ 職責邊界：${l.boundary}</div>`;
+}
+document.querySelectorAll('.node').forEach(n => n.addEventListener('click', () => showLayer(n.dataset.k)));
+showLayer('input');
+
+/* ---------- 2. Principles ---------- */
+const PR = [
+  ['🧠','記憶體外置','不依賴模型自身記憶，所有跨階段狀態存於 Obsidian。'],
+  ['➡️','單向流動 + 回寫','資料依 I→P→P→O 方向處理，每階段完成後回寫 Obsidian。'],
+  ['⚖️','邏輯與視覺分離','Process 鎖定「對不對」，Output 只負責「好不好看」，職責不可混淆。'],
+  ['🔎','可追溯性','每份交接文件保留原始來源與時間戳，任何結論都可回查依據。']
+];
+$('#prGrid').innerHTML = PR.map(p => `<div class="card pr"><div class="ico">${p[0]}</div><h3>${p[1]}</h3><p style="margin:0;color:var(--ink2)">${p[2]}</p></div>`).join('');
+
+/* ---------- 3. SOP stepper ---------- */
+const checks = store.get('checks', {});
+const picks = store.get('picks', {});
+const cb = (id, html) => `<label><input type="checkbox" data-ck="${id}" ${checks[id] ? 'checked' : ''}><span>${html}</span></label>`;
+const chipRow = (id, opts) => `<div class="chips" data-chips="${id}">${opts.map(o => `<button class="chip ${picks[id] === o ? 'on' : ''}" data-v="${o}">${o}</button>`).join('')}</div>`;
+const STEPS = [
+  {t:'前置檢查', ids:['pre1','pre2','pre3'], html:() => `
+    <h3>執行任何素材前，先確認三件事</h3>
+    <div class="checklist">
+      ${cb('pre1','已取得影片逐字稿／字幕，或自行整理的重點摘要')}
+      ${cb('pre2','已判斷主題定位')}${chipRow('type',['工具教學型','商業策略型','趨勢觀點型'])}
+      ${cb('pre3','已確認應用場景')}${chipRow('scene',['資策會/工研院課綱','CGM Coach短影音','EMBA教材','內部SOP','其他'])}
+    </div>`},
+  {t:'Step 1 Input', ids:['in1','in2','in3'], html:() => `
+    <h3>Input 階段 · Gemini／NotebookLM</h3>
+    <div class="checklist">
+      ${cb('in1','取得影片逐字稿／字幕')}
+      ${cb('in2','依「大主題 → 子章節 → 重點條列」分類')}
+      ${cb('in3','標記時間戳，供後續回查')}
+    </div>
+    <pre><code>一、[章節名稱]
+   - 重點1 [時間戳]
+   - 重點2 [時間戳]
+二、[章節名稱]
+   ...</code></pre>`},
+  {t:'Step 2 Process', ids:['p1','p2','p3','p4'], html:() => `
+    <h3>Process 階段 · 固定三問，不可省略</h3>
+    <div class="checklist">
+      ${cb('p1','<strong>費曼複述</strong>：能否用自己的話講給外行人聽？（檢驗是否真正理解）')}
+      ${cb('p2','<strong>第一性原理拆解</strong>：前提假設是什麼？是否適用跨界情境？（避免盲目套用）')}
+      ${cb('p3','<strong>反例／風險點搜尋</strong>：是否有被忽略的限制或反對案例？（提升穩健性）')}
+      ${cb('p4','產出<strong>最終定稿邏輯</strong>')}
+    </div>
+    <p><a href="#lab">→ 到「三問實作」親手練一次</a></p>`},
+  {t:'Step 3 Pipeline', ids:[], html:() => `
+    <h3>Pipeline 階段 · 條件觸發</h3>
+    <p>這份素材需要重複產出嗎？</p>
+    <div class="decision" id="pipeDecision">
+      <button data-v="yes" class="${picks.pipe === 'yes' ? 'on' : ''}"><strong>需要</strong><br><small>例：每週固定教學影片轉短影音</small></button>
+      <button data-v="no" class="${picks.pipe === 'no' ? 'on' : ''}"><strong>不需要</strong><br><small>例：單次教材整理</small></button>
+    </div>
+    <div class="result" id="pipeResult">${pipeMsg(picks.pipe)}</div>
+    <pre><code>IF 素材需重複產出
+    → 設計 Claude Code pipeline
+ELSE
+    → 跳過，直接進入 Step 4</code></pre>`},
+  {t:'Step 4 Output', ids:['o1','o2','o3'], html:() => `
+    <h3>Output 階段 · 視覺化交付前必答三問</h3>
+    <div class="checklist">
+      ${cb('o1','最終用於什麼場合？（決定版面風格）')}
+      ${cb('o2','是否有既定視覺規範需套用？（<a href="#design">見視覺規範</a>）')}
+      ${cb('o3','哪些論證邏輯<strong>絕對不可被視覺模型更動</strong>？')}
+    </div>`}
+];
+function pipeMsg(v){
+  if (v === 'yes') return '✅ 啟用 Claude Code：設計自動化 pipeline（例如短影音產線），輸出 .md／.mp4／.pptx。';
+  if (v === 'no') return '⏭ 跳過 Pipeline，直接進入 Step 4 Output。';
+  return '請先做出判斷。';
+}
+let cur = store.get('step', 0);
+const stepDone = s => s.ids.length ? s.ids.every(id => checks[id]) : !!picks.pipe;
+function renderSteps(){
+  $('#steps').innerHTML = STEPS.map((s,i) => `<button role="tab" aria-selected="${i===cur}" class="${i===cur?'on':''}" data-i="${i}">${s.t}${stepDone(s)?'<span class="ck">✓</span>':''}</button>`).join('');
+  $('#stepBody').innerHTML = STEPS[cur].html() + `<div class="row" style="margin-top:16px">${cur>0?'<button class="btn ghost" data-go="-1">← 上一步</button>':''}${cur<STEPS.length-1?'<button class="btn" data-go="1">下一步 →</button>':'<a class="btn" href="#template" style="text-decoration:none">完成！產出交接文件 →</a>'}</div>`;
+}
+$('#steps').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cur = +b.dataset.i; store.set('step', cur); renderSteps(); });
+$('#stepBody').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go){ cur += +go.dataset.go; store.set('step', cur); renderSteps(); return; }
+  const chip = e.target.closest('.chip');
+  if (chip){ const id = chip.parentElement.dataset.chips; picks[id] = chip.dataset.v; store.set('picks', picks); renderSteps(); syncTplFromPicks(); return; }
+  const dec = e.target.closest('#pipeDecision button');
+  if (dec){ picks.pipe = dec.dataset.v; store.set('picks', picks); renderSteps(); syncTplFromPicks(); }
+});
+$('#stepBody').addEventListener('change', e => {
+  const c = e.target.closest('[data-ck]'); if (!c) return;
+  checks[c.dataset.ck] = c.checked; store.set('checks', checks); renderSteps();
+});
+renderSteps();
+
+/* ---------- 4. Lab ---------- */
+const labIds = ['lab0','lab1','lab2','lab3','lab4'];
+const labSaved = store.get('lab', {});
+labIds.forEach(id => { $('#'+id).value = labSaved[id] || ''; });
+function labUpdate(){
+  const filled = ['lab1','lab2','lab3'].filter(id => $('#'+id).value.trim().length >= 6).length;
+  $('#labMeter').style.width = (filled/3*100) + '%';
+  const ok = filled === 3;
+  $('#lab4').disabled = !ok;
+  $('#labLock').textContent = ok ? '🔓 已解鎖：用一句話收斂結論' : `🔒 先完成三問才能填寫（${filled}/3）`;
+  const v = {}; labIds.forEach(id => v[id] = $('#'+id).value); store.set('lab', v);
+}
+labIds.forEach(id => $('#'+id).addEventListener('input', labUpdate));
+labUpdate();
+$('#labClear').addEventListener('click', () => { labIds.forEach(id => $('#'+id).value = ''); labUpdate(); });
+$('#labToTpl').addEventListener('click', () => {
+  const map = {lab0:'topic', lab1:'feynman', lab2:'first', lab3:'risk', lab4:'final'};
+  Object.entries(map).forEach(([a,b]) => { const v = $('#'+a).value.trim(); if (v) $('#tpl_'+b).value = v; });
+  renderTpl(); location.hash = '#template'; toast('已帶入交接模板');
+});
+
+/* ---------- 5. Matrix + sorter ---------- */
+const MATRIX = [
+  ['Gemini / NotebookLM','Input','資料粗整理、多來源交叉比對','深度邏輯驗證'],
+  ['Claude','Process','邏輯推理、費曼複述、第一性原理驗證','最終視覺排版'],
+  ['Claude Code','Pipeline','自動化腳本、系統整合、重複性產出','內容邏輯判斷'],
+  ['GPT-5.6','Output','繁中圖像／簡報最終視覺化','更動已驗證的論證邏輯']
+];
+$('#matrixBody').innerHTML = MATRIX.map(r => `<tr><td>${r[0]}</td><td><span class="pill en">${r[1]}</span></td><td>${r[2]}</td><td style="color:var(--bad)">✕ ${r[3]}</td></tr>`).join('');
+const MODELS = ['Gemini','Claude','Claude Code','GPT-5.6'];
+const TASKS = [
+  ['擷取 YouTube 逐字稿並分章節、標時間戳','Gemini','Input 粗整理是 Gemini／NotebookLM 的主場。'],
+  ['把結論用外行人聽得懂的話複述一次','Claude','費曼複述屬於 Process 三問之一。'],
+  ['寫腳本掃描 Vault 裡的「孤島筆記」','Claude Code','重複性、自動化的系統工作交給 Pipeline。'],
+  ['產出 16:9 玻璃擬態繁中簡報','GPT-5.6','Output 層只負責視覺呈現。'],
+  ['把三支影片的觀點交叉比對','Gemini','多來源交叉比對是 Input 層的職責。'],
+  ['找出結論在寵物產業會失效的反例','Claude','反例／風險點搜尋屬 Process 驗證。'],
+  ['每週把教學影片自動剪成短影音','Claude Code','Whisper→ffmpeg→…的產線由 Claude Code 串接。'],
+  ['覺得論點太長，順手幫忙改寫核心結論','Claude','陷阱題！GPT-5.6 不可更動論證；改結論要回 Process 重驗。']
+];
+let answers = {};
+function renderSorter(){
+  let right = 0, done = 0;
+  $('#sorter').innerHTML = TASKS.map((t,i) => {
+    const a = answers[i]; if (a){ done++; if (a === t[1]) right++; }
+    const cls = a ? (a === t[1] ? 'right' : 'wrong') : '';
+    return `<div class="task ${cls}"><div class="t">${t[0]}</div><div class="opts">${MODELS.map(m => `<button data-i="${i}" data-m="${m}" class="${a===m?'pick':''}" ${a?'disabled':''}>${m}</button>`).join('')}</div>${a?`<div class="fb">${a===t[1]?'✅ 正確':'❌ 應交給 <strong>'+t[1]+'</strong>'}：${t[2]}</div>`:''}</div>`;
+  }).join('');
+  $('#sorterScore').textContent = `答對 ${right} / ${TASKS.length}` + (done === TASKS.length ? (right === TASKS.length ? ' 🏆 全對！分工觀念滿分' : ' — 再玩一次？') : '');
+}
+$('#sorter').addEventListener('click', e => { const b = e.target.closest('button[data-m]'); if (!b) return; answers[b.dataset.i] = b.dataset.m; renderSorter(); });
+$('#sorterReset').addEventListener('click', () => { answers = {}; renderSorter(); });
+renderSorter();
+
+/* ---------- 6. Template ---------- */
+const TPL_FIELDS = [
+  ['topic','主題名稱','input'],['ver','版本號','input','1.0'],
+  ['src','原始素材來源連結／平台','input'],['gem','Gemini／NotebookLM 初步重點','text'],
+  ['feynman','費曼複述版本','text'],['first','第一性原理拆解','text'],['risk','反例／風險點','text'],['final','最終定稿邏輯','text'],
+  ['pipe','pipeline 需求','text'],['fmt','輸出格式','input'],
+  ['style','版面風格要求','input','16:9 橫式、淺藍－青綠漸層 + 玻璃擬態卡片'],['font','繁中字型／排版規範','input','Noto Sans TC + Montserrat；一卡一重點'],
+  ['ban','禁止事項（不可更動的核心論證）','text']
+];
+const tplSaved = store.get('tpl', {});
+$('#tplForm').innerHTML = TPL_FIELDS.map(f => `<div class="field"><label for="tpl_${f[0]}">${f[1]}</label>${f[2]==='text'?`<textarea id="tpl_${f[0]}"></textarea>`:`<input type="text" id="tpl_${f[0]}">`}</div>`).join('');
+TPL_FIELDS.forEach(f => { $('#tpl_'+f[0]).value = tplSaved[f[0]] ?? (f[3] || ''); });
+const today = () => { const d = new Date(); return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0'); };
+const v = k => $('#tpl_'+k).value.trim();
+function fileName(){ return `${(v('topic') || '主題名稱').replace(/[\\/:*?"<>|]/g,'_')}_v${v('ver') || '1.0'}_${today()}.md`; }
+function buildMd(){
+  const topic = v('topic') || '[主題名稱]', ver = v('ver') || '1.0';
+  const meta = [picks.type && `主題定位：${picks.type}`, picks.scene && `應用場景：${picks.scene}`].filter(Boolean);
+  return `# ${topic}_v${ver}
+${meta.length ? '\n> ' + meta.join('｜') + '\n' : ''}
+## 一、原始素材來源（Input階段）
+- 來源連結/平台：${v('src')}
+- Gemini/NotebookLM 初步重點：${v('gem')}
+
+## 二、驗證後結論（Process階段 - Claude）
+- 費曼複述版本：${v('feynman')}
+- 第一性原理拆解：${v('first')}
+- 反例/風險點：${v('risk')}
+- 最終定稿邏輯：${v('final')}
+
+## 三、待自動化事項（Claude Code階段，若需要）
+- pipeline 需求：${v('pipe')}
+- 輸出格式：${v('fmt')}
+
+## 四、視覺化交付指令（Output階段 - GPT-5.6）
+- 版面風格要求：${v('style')}
+- 繁中字型/排版規範：${v('font')}
+- 禁止事項（不可更動的核心論證）：${v('ban')}
+`;
+}
+function renderTpl(){
+  $('#tplOut').textContent = buildMd();
+  $('#tplName').textContent = fileName();
+  const s = {}; TPL_FIELDS.forEach(f => s[f[0]] = $('#tpl_'+f[0]).value); store.set('tpl', s);
+}
+function syncTplFromPicks(){
+  if (picks.pipe === 'no' && !v('pipe')) $('#tpl_pipe').value = '不需要（單次整理，跳過 Pipeline）';
+  renderTpl();
+}
+$('#tplForm').addEventListener('input', renderTpl);
+renderTpl();
+$('#tplCopy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(buildMd()); toast('已複製 Markdown'); }
+  catch(e){ const r = document.createRange(); r.selectNodeContents($('#tplOut')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('請按 Ctrl/⌘ + C 複製'); }
+});
+$('#tplDl').addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([buildMd()], {type:'text/markdown;charset=utf-8'}));
+  a.download = fileName(); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+/* ---------- 7. Quiz ---------- */
+const QUIZ = [
+  ['Gemini／NotebookLM 在 IPPOO 中負責哪一層？',['Input','Process','Pipeline','Output'],0,'Input 層負責逐字稿擷取、章節分類、時間戳等粗整理。'],
+  ['哪一層只處理「內容對不對」，不碰視覺？',['Input','Process','Output','Obsidian'],1,'Process（Claude）鎖定正確性與邏輯嚴謹度；邏輯與視覺分離是核心原則。'],
+  ['Pipeline（Claude Code）什麼時候該啟用？',['每份素材都要','只有做簡報時','素材需要重複、自動化產出時','Process 驗證失敗時'],2,'Pipeline 是選用層，單次教材整理可以直接跳過。'],
+  ['GPT-5.6 在 Output 階段發現論點冗長，可以直接改寫核心結論嗎？',['可以，只要更好讀','不可以，核心論證由 Process 鎖定','可以，但要通知 Claude','看場合決定'],1,'Output 只負責視覺呈現；要改結論必須回到 Process 重跑三問。'],
+  ['為什麼要用 Obsidian 當記憶中樞？',['因為它免費','模型之間無法共享記憶，需要外部唯一事實來源','因為它能生成圖片','為了取代 Gemini'],1,'記憶體外置：所有跨階段狀態存於 Obsidian，維持一致性與可追溯性。'],
+  ['下列何者「不是」Process 固定三問？',['費曼複述','第一性原理拆解','反例／風險點搜尋','A/B 測試'],3,'三問是費曼複述、第一性原理、反例驗證，且不可省略。'],
+  ['交接文件的建議命名規則是？',['隨意命名','[主題]_v[版本]_[日期].md','日期.md','模型名稱.md'],1,'統一命名讓 Vault 可追溯、可版本化。']
+];
+let qi = 0, qScore = 0, qAnswered = false;
+function renderQuiz(){
+  if (qi >= QUIZ.length){
+    const best = Math.max(store.get('best', 0), qScore); store.set('best', best);
+    $('#quizBox').innerHTML = `<h3>完成！得分 ${qScore} / ${QUIZ.length}</h3><p>${qScore === QUIZ.length ? '🏆 滿分！您已經可以用 IPPOO 帶團隊了。' : qScore >= 5 ? '👍 觀念扎實，回頭看看答錯的那題。' : '📚 建議回到架構與分工兩課再複習一次。'}</p><p style="color:var(--muted)">歷史最佳：${best} / ${QUIZ.length}</p><button class="btn" id="qRestart">再測一次</button>`;
+    $('#qRestart').onclick = () => { qi = 0; qScore = 0; renderQuiz(); };
+    return;
+  }
+  const q = QUIZ[qi]; qAnswered = false;
+  $('#quizBox').innerHTML = `<div class="qhead"><span class="pill">第 ${qi+1} / ${QUIZ.length} 題</span><span style="color:var(--muted)">得分 ${qScore}</span></div>
+    <h3 style="margin-top:12px">${q[0]}</h3>
+    ${q[1].map((o,i) => `<button class="opt" data-i="${i}">${o}</button>`).join('')}
+    <div class="why" id="qWhy"></div>`;
+}
+$('#quizBox').addEventListener('click', e => {
+  const b = e.target.closest('.opt'); if (!b || qAnswered) return;
+  qAnswered = true; const q = QUIZ[qi], pick = +b.dataset.i;
+  document.querySelectorAll('#quizBox .opt').forEach((o,i) => { if (i === q[2]) o.classList.add('right'); else if (i === pick) o.classList.add('wrong'); });
+  if (pick === q[2]) qScore++;
+  $('#qWhy').innerHTML = `${pick === q[2] ? '✅ 答對了！' : '❌ 不對喔。'}${q[3]}<div style="margin-top:12px"><button class="btn" id="qNext">${qi === QUIZ.length-1 ? '看結果' : '下一題 →'}</button></div>`;
+  $('#qNext').onclick = () => { qi++; renderQuiz(); };
+});
+renderQuiz();
+
+/* ---------- 8. Automation checklist ---------- */
+const AUTO = [
+  ['a1','建立標準化 Vault 目錄結構初始化腳本'],
+  ['a2','撰寫「Process 定稿自動回寫 Obsidian」腳本，檔名格式 [主題]_v[版本]_[日期].md'],
+  ['a3','圖片附件路徑自動指向 02_圖片上傳 資料夾'],
+  ['a4','撰寫「孤島筆記」掃描腳本，自動列出未建立雙向連結的關鍵詞']
+];
+$('#autoList').innerHTML = AUTO.map(a => cb(a[0], a[1])).join('');
+$('#autoList').addEventListener('change', e => { const c = e.target.closest('[data-ck]'); if (c){ checks[c.dataset.ck] = c.checked; store.set('checks', checks); } });
+
+/* ---------- Nav progress / active ---------- */
+const links = [...document.querySelectorAll('#navlinks a')];
+const secs = links.map(a => document.querySelector(a.getAttribute('href')));
+function onScroll(){
+  const h = document.documentElement;
+  $('#progress').style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100) + '%';
+  let idx = -1; secs.forEach((s,i) => { if (s.getBoundingClientRect().top < 120) idx = i; });
+  links.forEach((a,i) => a.classList.toggle('on', i === idx));
+}
+addEventListener('scroll', onScroll, {passive:true}); onScroll();
+})();
+</script>
+</body>
+</html>

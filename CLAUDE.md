@@ -18,3 +18,7 @@
 ### 錯誤沉澱
 
 被使用者糾正時，在 `LESSONS.md` 新增一條 `L-xxx`；能用程式判斷的，就加進 `.github/scripts/handoff-check.py` 的 `RULES`。
+
+## 自動把關（Stop hook）
+
+`.claude/settings.json` 設定了 Stop hook（`.claude/hooks/stop-verify.sh`）：每次 Claude 要結束回覆時，自動跑 `handoff-check.py` 與 `repo-check.py`。有 FAIL 就擋下，要求修正；第二次仍失敗才放行，此時必須在回報中寫「未完成」。

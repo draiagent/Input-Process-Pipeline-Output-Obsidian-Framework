@@ -16,3 +16,5 @@ jobs:
           python-version: "3.x"
       - name: 名稱／授權／版本／徽章／tag 一致性檢查
         run: python .github/scripts/repo-check.py . --name "${{ github.event.repository.name }}" --tags
+      - name: 交接筆記自動檢查（LESSONS 錯誤沉澱）
+        run: python .github/scripts/handoff-check.py notes

@@ -1,6 +1,8 @@
-# TEAM-5｜AI 團隊協作決策法
+# TEAM-5R｜AI 團隊協作決策法
 
-> 與 [TRC-3D](https://github.com/draiagent/ai-to-agent-trc-3d) 的關係：TRC-3D 判斷一件任務該用什麼工作模式；判定需要多個 AI 協作時，套用 TEAM-5。
+> **R＝Rules**：TEAM-5R 是 AI 團隊協作的五條法則。
+
+> 與 [TRC-3D](https://github.com/draiagent/ai-to-agent-trc-3d) 的關係：TRC-3D 判斷一件任務該用什麼工作模式；判定需要多個 AI 協作時，套用 TEAM-5R。
 
 ## 五條法則
 

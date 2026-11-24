@@ -15,6 +15,7 @@
 | L-006 | 模板佔位字（TODO、[主題名稱]）沒刪就定稿 | 自動檢查 | `r_placeholder` |
 | L-007 | Claude 沒看結果就回報「做完了」 | 自動檢查（Stop hook）＋文字規則 | `.claude/hooks/stop-verify.sh`、`CLAUDE.md` |
 | L-008 | Gemini 潤稿時改錯專業事實 | 文字規則：潤稿後由 Claude 對照原稿核實事實 | SOP 4.3 |
+| L-009 | 使用者只是詢問或回答問題，Claude 就直接修改並推送 | 文字規則：使用者沒有明確說「改」「做」「推送」，就先提出方案，等確認後再動手 | `CLAUDE.md` |
 
 ## 新增一條的流程
 

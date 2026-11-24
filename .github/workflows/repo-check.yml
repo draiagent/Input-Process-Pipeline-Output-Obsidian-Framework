@@ -16,3 +16,7 @@ jobs:
           python-version: "3.x"
       - name: 名稱／授權／版本／徽章／tag 一致性檢查
         run: python .github/scripts/repo-check.py . --name "${{ github.event.repository.name }}" --tags
+      - name: 錯誤沉澱檢查｜規則自我測試（每條規則必須抓得到錯誤範例）
+        run: python .github/scripts/lesson-check.py --self-test
+      - name: 錯誤沉澱檢查｜掃描所有文件
+        run: python .github/scripts/lesson-check.py .

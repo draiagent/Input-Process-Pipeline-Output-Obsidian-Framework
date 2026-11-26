@@ -2,7 +2,8 @@
 // 狀態機：pending → sanitized → executed → verify → done | human_review（錯誤 → failed）
 // 呼叫方式：POST /functions/v1/skill-glucose-analyzer，帶會員 JWT，body: { "days": 14, "question": "..." }
 //
-// 需要的 secrets：ANTHROPIC_API_KEY（SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY 平台自帶）
+// 需要的 secrets：ANTHROPIC_API_KEY、OPENAI_API_KEY（向量檢索用，未設定時退回關鍵字檢索）
+//（SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY 平台自帶）
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 
@@ -10,6 +11,8 @@ const MODEL = "claude-sonnet-5-5";
 const LOW = 70;   // 紅線：低血糖 mg/dL
 const HIGH = 250; // 紅線：高血糖 mg/dL
 const SKILL = "skill-glucose-analyzer";
+const EMBED_MODEL = "text-embedding-3-small"; // 與 scripts/kb_ingest/ingest.py 一致，1536 維
+const KB_COUNT = 6;
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -67,9 +70,11 @@ Deno.serve(async (req) => {
 
     // 3. Executed：確定性指標由程式算，不交給 LLM
     const stats = analyze(clean.readings, clean.meals);
-    const kb = await retrieveKb(userDb, stats);
+    const { kb, method } = await retrieveKb(userDb, stats, clean.question);
     const advice = await callClaude(stats, kb, clean.question);
-    await setStatus(admin, logId, "executed", { tools_used: ["cgm_readings_query", "meal_log_query", "rag_search", "llm"] });
+    await setStatus(admin, logId, "executed", {
+      tools_used: ["cgm_readings_query", "meal_log_query", method === "vector" ? "rag_vector" : "rag_keyword", "llm"],
+    });
 
     // 4. Verify：紅線驗證
     const flags: string[] = [];
@@ -148,21 +153,57 @@ function nearest(r: { m: number; g: number }[], m: number): number | null {
   return best && m - best.m <= 30 ? best.g : null;
 }
 
-/** 衛教知識檢索：依指標挑關鍵字查 kb_documents（之後可換成 match_kb 向量檢索） */
-async function retrieveKb(db: SupabaseClient, stats: ReturnType<typeof analyze>) {
-  const topics = ["餐後血糖", "TIR"];
-  if (stats.cv >= 36) topics.push("血糖變異");
-  if (stats.tbr > 0) topics.push("低血糖");
-  if (stats.tar > 25) topics.push("高血糖");
-  const { data, error } = await db.from("kb_documents").select("id, chunk, title, page")
-    .eq("domain", "glucose")
-    .or(topics.map((t) => `chunk.ilike.*${t}*`).join(","))
-    .limit(6);
-  if (error) throw new Error(error.message);
-  return (data ?? []) as { id: number; chunk: string; title: string; page: number }[];
+type KbHit = { id: number; chunk: string; title: string | null; page: number | null };
+
+/** 依指標挑主題詞（中英並列，英文給 ADA 指引用） */
+function kbTopics(stats: ReturnType<typeof analyze>): string[] {
+  const t = ["餐後血糖 postprandial glucose", "TIR time in range"];
+  if (stats.cv >= 36) t.push("血糖變異 glycemic variability");
+  if (stats.tbr > 0) t.push("低血糖 hypoglycemia");
+  if (stats.tar > 25) t.push("高血糖 hyperglycemia");
+  return t;
 }
 
-async function callClaude(stats: unknown, kb: { id: number; chunk: string; title?: string; page?: number }[], question: string | null) {
+/**
+ * 衛教知識檢索：先用 match_kb 向量檢索；沒有 OPENAI_API_KEY、向量失敗或查無結果時退回關鍵字。
+ * 一律以會員 JWT 查詢，受 kb_documents 的 RLS（kb_read）限制。
+ * 送去做向量的只有主題詞與已去識別化的提問，不含任何血糖原始資料。
+ */
+async function retrieveKb(db: SupabaseClient, stats: ReturnType<typeof analyze>, question: string | null) {
+  const topics = kbTopics(stats);
+  const key = Deno.env.get("OPENAI_API_KEY");
+  if (key) {
+    try {
+      const query = [question, ...topics].filter(Boolean).join("；");
+      const res = await fetch("https://api.openai.com/v1/embeddings", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "content-type": "application/json" },
+        body: JSON.stringify({ model: EMBED_MODEL, input: query }),
+      });
+      if (!res.ok) throw new Error(`openai ${res.status}`);
+      const embedding: number[] = (await res.json()).data[0].embedding;
+      const { data, error } = await db.rpc("match_kb", {
+        query_embedding: embedding,
+        match_domain: "glucose",
+        match_count: KB_COUNT,
+      });
+      if (error) throw new Error(error.message);
+      if (data?.length) return { kb: data as KbHit[], method: "vector" as const };
+    } catch (e) {
+      console.warn("vector retrieval failed, falling back to keyword:", String(e));
+    }
+  }
+  // 每個主題拆成「中文詞」與「英文詞」各自比對
+  const words = topics.flatMap((t) => [t.slice(0, t.indexOf(" ")), t.slice(t.indexOf(" ") + 1)]);
+  const { data, error } = await db.from("kb_documents").select("id, chunk, title, page")
+    .eq("domain", "glucose")
+    .or(words.map((w) => `chunk.ilike.*${w.replace(/[,()*]/g, "")}*`).join(","))
+    .limit(KB_COUNT);
+  if (error) throw new Error(error.message);
+  return { kb: (data ?? []) as KbHit[], method: "keyword" as const };
+}
+
+async function callClaude(stats: unknown, kb: KbHit[], question: string | null) {
   const system = `你是 CGM 血糖教練的分析助理。依據提供的去識別化血糖指標與衛教知識，用繁體中文給會員 3 個可立即執行的生活建議（飲食順序、餐後活動、作息等）。
 規則：
 - 不做診斷、不建議任何藥物或劑量調整；涉及用藥一律請會員與醫師討論。
@@ -193,7 +234,7 @@ async function callClaude(stats: unknown, kb: { id: number; chunk: string; title
     const parsed = JSON.parse(match[0]);
     return {
       text: String(parsed.advice ?? ""),
-      citations: Array.isArray(parsed.citations) ? parsed.citations.map(Number).filter(Number.isFinite) : [],
+      citations: (Array.isArray(parsed.citations) ? parsed.citations.map(Number).filter(Number.isFinite) : []) as number[],
     };
   } catch {
     return { text, citations: [] as number[] };

@@ -82,6 +82,7 @@ def text_quality(s: str, lang: str) -> float:
 
 
 def clean(s: str) -> str:
+    s = re.sub("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]", "", s)  # 控制字元
     s = s.replace("­", "").replace("ﬁ", "fi").replace("ﬂ", "fl")
     s = re.sub(r"-\n(?=[a-z])", "", s)                 # 英文斷字
     s = re.sub(r"(?<=[一-鿿])[ \t]+(?=[一-鿿])", "", s)  # 中文字間空白

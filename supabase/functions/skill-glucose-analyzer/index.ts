@@ -154,15 +154,15 @@ async function retrieveKb(db: SupabaseClient, stats: ReturnType<typeof analyze>)
   if (stats.cv >= 36) topics.push("血糖變異");
   if (stats.tbr > 0) topics.push("低血糖");
   if (stats.tar > 25) topics.push("高血糖");
-  const { data, error } = await db.from("kb_documents").select("id, chunk")
+  const { data, error } = await db.from("kb_documents").select("id, chunk, title, page")
     .eq("domain", "glucose")
     .or(topics.map((t) => `chunk.ilike.*${t}*`).join(","))
     .limit(6);
   if (error) throw new Error(error.message);
-  return (data ?? []) as { id: number; chunk: string }[];
+  return (data ?? []) as { id: number; chunk: string; title: string; page: number }[];
 }
 
-async function callClaude(stats: unknown, kb: { id: number; chunk: string }[], question: string | null) {
+async function callClaude(stats: unknown, kb: { id: number; chunk: string; title?: string; page?: number }[], question: string | null) {
   const system = `你是 CGM 血糖教練的分析助理。依據提供的去識別化血糖指標與衛教知識，用繁體中文給會員 3 個可立即執行的生活建議（飲食順序、餐後活動、作息等）。
 規則：
 - 不做診斷、不建議任何藥物或劑量調整；涉及用藥一律請會員與醫師討論。
@@ -171,7 +171,7 @@ async function callClaude(stats: unknown, kb: { id: number; chunk: string }[], q
 
   const user = JSON.stringify({
     stats,
-    knowledge: kb.map((k) => ({ id: k.id, text: k.chunk })),
+    knowledge: kb.map((k) => ({ id: k.id, text: k.chunk, source: k.title, page: k.page })),
     member_question: question || null,
   });
 

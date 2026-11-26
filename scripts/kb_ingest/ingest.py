@@ -26,6 +26,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -102,7 +103,8 @@ def is_reference_list(c: str) -> bool:
 
 def split_chunks(text: str, lang: str) -> list[str]:
     target, overlap = CHUNK[lang]
-    sep = r"(?<=[。！？；])|(?<=[.!?;])\s+" if lang == "zh" else r"(?<=[.!?;])\s+"
+    # 零寬切點：只切不吃字，英文句間空白保留在下一句開頭（否則會黏成 "visit.Time"）
+    sep = r"(?<=[。！？；])|(?<=[.!?;])(?=\s)" if lang == "zh" else r"(?<=[.!?;])(?=\s)"
     paras = [p for p in re.split(r"\n{2,}|\n(?=[•\-●▪■◆]|\d+\.\d*\s)", text) if p.strip()]
     sentences: list[str] = []
     for p in paras:
@@ -132,10 +134,15 @@ def post_json(url: str, payload, headers: dict, retries: int = 4):
                 body = r.read()
                 return json.loads(body) if body else None
         except urllib.error.HTTPError as e:
-            if e.code in (429, 500, 502, 503) and i < retries - 1:
+            if e.code in (429, 500, 502, 503, 504) and i < retries - 1:
                 time.sleep(2 ** i * 2)
                 continue
             raise SystemExit(f"HTTP {e.code} {url}: {e.read().decode()[:300]}")
+        except (urllib.error.URLError, TimeoutError) as e:  # 網路中斷、逾時也重試
+            if i < retries - 1:
+                time.sleep(2 ** i * 2)
+                continue
+            raise SystemExit(f"連線失敗 {url}: {e}")
 
 
 def embed(texts: list[str]) -> list[list[float]]:

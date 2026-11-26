@@ -1,0 +1,38 @@
+[
+  {
+    "source": "ada-soc-2026",
+    "title": "ADA Standards of Care in Diabetes—2026",
+    "match": "standards-of-care-2026",
+    "domain": "glucose",
+    "lang": "en"
+  },
+  {
+    "source": "tade-yearbook-2024-t2d",
+    "title": "臺灣糖尿病年鑑 2024 第 2 型糖尿病",
+    "match": "42648352",
+    "domain": "glucose",
+    "lang": "zh"
+  },
+  {
+    "source": "tade-yearbook-2025-special",
+    "title": "2025 糖尿病特殊族群年鑑",
+    "match": "fde1c36c",
+    "domain": "glucose",
+    "lang": "zh"
+  },
+  {
+    "source": "dm-osteoporosis-consensus",
+    "title": "糖尿病患者骨質疏鬆照護共識",
+    "match": "69d122ec",
+    "domain": "glucose",
+    "lang": "zh"
+  },
+  {
+    "source": "tw-obesity-guideline-2025",
+    "title": "台灣成人肥胖臨床實證指引（114 年 12 月）",
+    "match": "b5363fe8",
+    "domain": "glucose",
+    "lang": "zh",
+    "ocr": true
+  }
+]
